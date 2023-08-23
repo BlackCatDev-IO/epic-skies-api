@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from api import epic_skies_api
+from infrastructure import mongo_setup
 
 app = FastAPI()
 
@@ -28,8 +29,8 @@ def configure_routing():
 
 
 @app.on_event("startup")
-async def startup_event():
-    pass
+async def configure_db():
+    await mongo_setup.init_connection('users-db')
 
 
 if __name__ == '__main__':
