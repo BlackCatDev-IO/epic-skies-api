@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     MONGO_URL: str
     CONFIG_ID: str
+    CURRENT_ALERTS_LIST_ID: str
     APP_MAX: int = 100
 
     class Config:

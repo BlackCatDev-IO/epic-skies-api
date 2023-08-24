@@ -1,6 +1,7 @@
 import fastapi
 
 from models.alert_model import AlertModel
+from models.current_alerts_list_model import CurrentAlertsList
 from models.user_model import UserModel
 from services import user_service
 from services.config_service import get_config
@@ -33,15 +34,11 @@ async def get_all_users() -> list[UserModel]:
 
 
 @router.get('/alerts')
-async def get_alerts() -> AlertModel:
-    response = await query_alerts()
-    features = response['features']
-    alert_model = AlertModel(**features[100])
-
-    size = len(features)
-    print(size)
-
-    return alert_model
+async def get_alerts() -> CurrentAlertsList:
+    try:
+        return await query_alerts()
+    except Exception as e:
+        print(e)
 
 
 @router.get('/config')

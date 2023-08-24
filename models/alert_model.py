@@ -40,7 +40,7 @@ class Properties(BaseModel):
     senderName: str
     headline: Any
     description: str
-    instruction: str
+    instruction: Optional[str] = None
     response: str
     parameters: Parameters
 
