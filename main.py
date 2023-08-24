@@ -6,7 +6,7 @@ from infrastructure import mongo_setup
 from services import config_service
 from services import nws_service
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
+from services import sentry_service
 
 app = FastAPI()
 
@@ -35,6 +35,7 @@ def configure_routing():
 @app.on_event("startup")
 async def configure_db():
     await mongo_setup.init_connection('epic-skies-db')
+    sentry_service.init_sentry()
     await init_interval_calls()
 
 

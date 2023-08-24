@@ -6,7 +6,7 @@ from config.config import settings
 from models.alert_model import AlertModel
 from models.current_alerts_list_model import CurrentAlertsList
 from services import config_service
-
+from services import sentry_service
 
 async def fetch_alerts_from_api():
     async with httpx.AsyncClient() as client:
@@ -40,6 +40,8 @@ async def query_alerts() -> Optional[CurrentAlertsList]:
         return updated_alert_list_from_storage
 
     except httpx.HTTPError as http_err:
-        print(f"HTTP error occurred: {http_err}")
+        error = f"HTTP error occurred: {http_err}"
+        sentry_service.capture_exception(error)
     except Exception as e:
-        print(f"An error occurred: {e}")
+        error = f"An error occurred: {e}"
+        sentry_service.capture_exception(error)
