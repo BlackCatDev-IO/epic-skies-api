@@ -1,6 +1,7 @@
 import fastapi
 
 from models.alert_model import AlertModel
+from models.config_model import ConfigModel
 from models.current_alerts_list_model import CurrentAlertsList
 from models.user_model import UserModel
 from services import user_service
@@ -11,7 +12,7 @@ router = fastapi.APIRouter()
 
 
 @router.get('/')
-async def root():
+async def root() -> dict:
     return {"status": "ok"}
 
 
@@ -42,7 +43,7 @@ async def get_alerts() -> CurrentAlertsList:
 
 
 @router.get('/config')
-async def get_remote_config():
+async def get_remote_config() -> ConfigModel:
     new_config = await get_config()
 
     return new_config

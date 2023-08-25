@@ -7,22 +7,33 @@ from models.alert_model import AlertModel
 from models.current_alerts_list_model import CurrentAlertsList
 from services import config_service, analytics_service
 from services import sentry_service
+from enum import Enum
 
 
-async def fetch_alerts_from_api():
-    async with httpx.AsyncClient() as client:
-        url = "https://api.weather.gov/alerts/active"
-        headers = {
-            "User-Agent": "Epic Skies App"
-        }
-        response = await client.get(url, headers=headers)
-        response.raise_for_status()  # Raise exception for non-2xx status codes
-        return response.json()['features']
+class AnalyticsEvents(Enum):
+    ALERTS_REQUEST = 'alerts_requested'
+    ALERTS_SUCCESS = 'alerts_updated_successfully'
+    ALERTS_ERROR = 'alerts_error'
 
 
-async def update_current_alerts_in_db(current_alert, alerts_list):
-    current_alert.alerts = alerts_list
-    await current_alert.save()
+async def fetch_alerts_from_api() -> CurrentAlertsList:
+    analytics_service.report_analytics_event(AnalyticsEvents.ALERTS_REQUEST.value)
+
+    try:
+        async with httpx.AsyncClient() as client:
+            url = "https://api.weather.gov/alerts/active"
+            headers = {
+                "User-Agent": "Epic Skies App"
+            }
+            response = await client.get(url, headers=headers)
+            response.raise_for_status()  # Raise exception for non-2xx status codes
+            alerts = response.json()['features']
+            alert_models = [AlertModel(**alert) for alert in alerts]
+            return CurrentAlertsList(alerts=alert_models)
+    except Exception as e:
+        error = f"An error occurred: {e}"
+        analytics_service.report_analytics_event(f'alerts_update_error {error}')
+        sentry_service.capture_exception(error)
 
 
 async def query_alerts() -> Optional[CurrentAlertsList]:
@@ -31,13 +42,12 @@ async def query_alerts() -> Optional[CurrentAlertsList]:
         return None
 
     try:
-        alerts = await fetch_alerts_from_api()
-        alert_models = [AlertModel(**alert) for alert in alerts]
-        current_alerts_list = CurrentAlertsList(alerts=alert_models)
+        latest_alerts = await fetch_alerts_from_api()
         updated_alert_list_from_storage = await CurrentAlertsList.get(settings.CURRENT_ALERTS_LIST_ID)
+        updated_alert_list_from_storage.alerts = latest_alerts.alerts
+        await updated_alert_list_from_storage.save()
 
-        await update_current_alerts_in_db(updated_alert_list_from_storage, current_alerts_list.alerts)
-        analytics_service.report_analytics_event('alerts_updated_successfully')
+        analytics_service.report_analytics_event(AnalyticsEvents.ALERTS_SUCCESS.value)
 
         return updated_alert_list_from_storage
 
