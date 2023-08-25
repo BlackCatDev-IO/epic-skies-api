@@ -44,6 +44,9 @@ async def query_alerts() -> Optional[CurrentAlertsList]:
     except httpx.HTTPError as http_err:
         error = f"HTTP error occurred: {http_err}"
         sentry_service.capture_exception(error)
+        analytics_service.report_analytics_event(f'alerts_update_error {error}')
+
     except Exception as e:
         error = f"An error occurred: {e}"
+        analytics_service.report_analytics_event(f'alerts_update_error {error}')
         sentry_service.capture_exception(error)

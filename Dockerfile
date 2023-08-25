@@ -1,3 +1,5 @@
+ARG PORT=8080
+
 FROM python:3.11
 
 # Set the working directory
