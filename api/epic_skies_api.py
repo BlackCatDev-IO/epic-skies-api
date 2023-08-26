@@ -1,12 +1,13 @@
+from typing import Optional
+
 import fastapi
 
-from models.alert_model import AlertModel
 from models.config_model import ConfigModel
 from models.current_alerts_list_model import CurrentAlertsList
 from models.user_model import UserModel
 from services import user_service
 from services.config_service import get_config
-from services.nws_service import query_alerts
+from services import nws_service
 
 router = fastapi.APIRouter()
 
@@ -35,9 +36,9 @@ async def get_all_users() -> list[UserModel]:
 
 
 @router.get('/alerts')
-async def get_alerts() -> CurrentAlertsList:
+async def get_alerts() -> Optional[CurrentAlertsList]:
     try:
-        return await query_alerts()
+        return await nws_service.query_alerts()
     except Exception as e:
         print(e)
 

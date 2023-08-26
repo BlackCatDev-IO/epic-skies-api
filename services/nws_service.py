@@ -11,14 +11,11 @@ from enum import Enum
 
 
 class AnalyticsEvents(Enum):
-    ALERTS_REQUEST = 'alerts_requested'
     ALERTS_SUCCESS = 'alerts_updated_successfully'
     ALERTS_ERROR = 'alerts_error'
 
 
-async def fetch_alerts_from_api() -> CurrentAlertsList:
-    analytics_service.report_analytics_event(AnalyticsEvents.ALERTS_REQUEST.value)
-
+async def fetch_alerts_from_api() -> Optional[CurrentAlertsList]:
     try:
         async with httpx.AsyncClient() as client:
             url = "https://api.weather.gov/alerts/active"
@@ -28,6 +25,8 @@ async def fetch_alerts_from_api() -> CurrentAlertsList:
             response = await client.get(url, headers=headers)
             response.raise_for_status()  # Raise exception for non-2xx status codes
             alerts = response.json()['features']
+            if alerts is None:
+                return None
             alert_models = [AlertModel(**alert) for alert in alerts]
             return CurrentAlertsList(alerts=alert_models)
     except Exception as e:
@@ -43,8 +42,13 @@ async def query_alerts() -> Optional[CurrentAlertsList]:
 
     try:
         latest_alerts = await fetch_alerts_from_api()
+
+        if latest_alerts is None:
+            return None
+
         updated_alert_list_from_storage = await CurrentAlertsList.get(settings.CURRENT_ALERTS_LIST_ID)
         updated_alert_list_from_storage.alerts = latest_alerts.alerts
+
         await updated_alert_list_from_storage.save()
 
         analytics_service.report_analytics_event(AnalyticsEvents.ALERTS_SUCCESS.value)
