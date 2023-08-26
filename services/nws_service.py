@@ -1,7 +1,6 @@
-from typing import Optional
-
 import httpx
 
+from typing import Optional
 from config.config import settings
 from models.alert_model import AlertModel
 from models.current_alerts_list_model import CurrentAlertsList

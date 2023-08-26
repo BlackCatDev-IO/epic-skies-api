@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     SENTRY_URL: str
     MIX_PANEL_TOKEN: str
     APP_MAX: int = 100
+    IS_PROD_ENV: bool
 
     class Config:
         env_file = ".env"

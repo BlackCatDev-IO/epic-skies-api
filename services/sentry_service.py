@@ -4,17 +4,20 @@ from sentry_sdk import capture_message
 
 
 def init_sentry():
-    sentry_sdk.init(
-        dsn=settings.SENTRY_URL,
+    if settings.IS_PROD_ENV:
 
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production,
-        traces_sample_rate=1.0,
-    )
-    print('Sentry Initialized')
+        sentry_sdk.init(
+            dsn=settings.SENTRY_URL,
+
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for performance monitoring.
+            # We recommend adjusting this value in production,
+            traces_sample_rate=1.0,
+        )
+        print('Sentry Initialized')
 
 
 def capture_exception(message: str):
-    print(message)
-    capture_message(message)
+    if settings.IS_PROD_ENV:
+        print(message)
+        capture_message(message)
