@@ -2,8 +2,11 @@ steps:
   # Step 1: Build the container image using Dockerfile
   - name: "gcr.io/cloud-builders/docker"
     args:
-      ["build", "-t", "gcr.io/blackcatdev/epic-skies/0.1.2", "."]
+      ["build", "-t", "gcr.io/blackcatdev/epic-skies/${_BUILD_NUMBER}", "."]
 
   # Step 2: Push the container image to Google Container Registry
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/blackcatdev/epic-skies/0.1.2"]
+    args: ["push", "gcr.io/blackcatdev/epic-skies/${_BUILD_NUMBER}"]
+
+substitutions:
+  _BUILD_NUMBER: "0.1.3"
