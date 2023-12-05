@@ -10,4 +10,4 @@ async def get_config() -> ConfigModel:
 
         return remote_config
     except Exception as e:
-        sentry_service.capture_exception(f'{e}')
+        sentry_service.capture_exception(repr(e))

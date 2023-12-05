@@ -29,7 +29,8 @@ async def fetch_alerts_from_api() -> Optional[CurrentAlertsList]:
             alert_models = [AlertModel(**alert) for alert in alerts]
             return CurrentAlertsList(alerts=alert_models)
     except Exception as e:
-        error = f"An error occurred: {e}"
+        exception_string = repr(e)
+        error = f"An error occurred: {exception_string}"
         analytics_service.report_analytics_event(f'alerts_update_error {error}')
         sentry_service.capture_exception(error)
 
@@ -41,12 +42,15 @@ async def query_alerts() -> Optional[CurrentAlertsList]:
 
     try:
         latest_alerts = await fetch_alerts_from_api()
+        print(latest_alerts)
 
         if latest_alerts is None:
             return None
 
         updated_alert_list_from_storage = await CurrentAlertsList.get(settings.CURRENT_ALERTS_LIST_ID)
-        updated_alert_list_from_storage.alerts = latest_alerts.alerts
+
+        if updated_alert_list_from_storage.alerts is not None:
+            updated_alert_list_from_storage.alerts = latest_alerts.alerts
 
         await updated_alert_list_from_storage.save()
 
@@ -55,11 +59,11 @@ async def query_alerts() -> Optional[CurrentAlertsList]:
         return updated_alert_list_from_storage
 
     except httpx.HTTPError as http_err:
-        error = f"HTTP error occurred: {http_err}"
+        error = f"HTTP error occurred: {repr(http_err)}"
         sentry_service.capture_exception(error)
         analytics_service.report_analytics_event(f'alerts_update_error {error}')
 
     except Exception as e:
-        error = f"An error occurred: {e}"
+        error = f"An error occurred: {repr(e)}"
         analytics_service.report_analytics_event(f'alerts_update_error {error}')
         sentry_service.capture_exception(error)
