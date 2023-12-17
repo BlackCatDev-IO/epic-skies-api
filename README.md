@@ -1,0 +1,1 @@
+A Fast API app that queries the National Weather Service for weather alerts and will trigger push notifications to subscribers [Epic Skies Weather App](https://link-url-here.org](https://apps.apple.com/us/app/epic-skies/id1582309252)https://apps.apple.com/us/app/epic-skies/id1582309252). Notification functionality still a work in progress. 
