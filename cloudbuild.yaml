@@ -9,4 +9,4 @@ steps:
     args: ["push", "gcr.io/blackcatdev/epic-skies/${_BUILD_NUMBER}"]
 
 substitutions:
-  _BUILD_NUMBER: "0.1.3"
+  _BUILD_NUMBER: "0.1.5"
