@@ -1,19 +1,20 @@
-ARG PORT=8080
+# Use the official Python base image
+FROM python:3.11-slim
 
-FROM python:3.11
-
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy and install the dependencies
-COPY ./requirements.txt .
-RUN pip install -r requirements.txt
+# Copy the requirements file into the container at /app
+COPY requirements.txt .
 
-# Copy the rest of the files
+# Install any dependencies specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code into the container at /app
 COPY . .
 
-# Expose the port (optional - this is for documentation purposes)
-EXPOSE 8080
+# Expose the port on which your FastAPI app will run
+EXPOSE 5000
 
-# Use the value of the PORT environment variable if available, default to 8080
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"]
+# Command to run the FastAPI app with uvicorn
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
