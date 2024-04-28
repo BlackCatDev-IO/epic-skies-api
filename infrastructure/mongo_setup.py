@@ -3,6 +3,7 @@ import beanie
 import motor.motor_asyncio
 
 from config.config import settings
+from models.app_alert_notice import AppAlertNotice
 from models.config_model import ConfigModel
 from models.current_alerts_list_model import CurrentAlertsList
 from models.user_model import UserModel
@@ -10,8 +11,8 @@ from models.user_model import UserModel
 
 async def init_connection(db_name: str):
     try:
-        client = motor.motor_asyncio.AsyncIOMotorClient(settings.MONGO_URL_LOCAL)
-        model_list = [UserModel, ConfigModel, CurrentAlertsList]
+        client = motor.motor_asyncio.AsyncIOMotorClient(settings.MONGO_URL)
+        model_list = [UserModel, ConfigModel, CurrentAlertsList, AppAlertNotice]
 
         await beanie.init_beanie(database=client[db_name], document_models=model_list)
 
