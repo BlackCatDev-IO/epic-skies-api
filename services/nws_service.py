@@ -7,6 +7,7 @@ from models.current_alerts_list_model import CurrentAlertsList
 from services import config_service, analytics_service
 from services import sentry_service
 from enum import Enum
+from datetime import datetime
 
 
 class AnalyticsEvents(Enum):
@@ -31,7 +32,7 @@ async def fetch_alerts_from_api() -> Optional[CurrentAlertsList]:
     except Exception as e:
         exception_string = repr(e)
         error = f"An error occurred: {exception_string}"
-        analytics_service.report_analytics_event(f'alerts_update_error {error}')
+        analytics_service.report_analytics_event(f'alerts_update_error', {'error': error})
         sentry_service.capture_exception(error)
 
 
@@ -42,10 +43,10 @@ async def query_alerts() -> Optional[CurrentAlertsList]:
 
     try:
         latest_alerts = await fetch_alerts_from_api()
-        print(latest_alerts)
 
         if latest_alerts is None:
             return None
+        print(f"alerts fetched at {datetime.now()}")
 
         updated_alert_list_from_storage = await CurrentAlertsList.get(settings.CURRENT_ALERTS_LIST_ID)
 
