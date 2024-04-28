@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     MIX_PANEL_TOKEN: str
     APP_MAX: int = 100
     IS_PROD_ENV: bool
+    ACCESS_TOKEN: str
 
     class Config:
         env_file = ".env"
