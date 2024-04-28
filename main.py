@@ -7,13 +7,23 @@ from services import config_service
 from services import nws_service
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from services import sentry_service
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(fast_api: FastAPI):
+    await mongo_setup.init_connection('epic-skies')
+    sentry_service.init_sentry()
+    await init_interval_calls()
+    yield
+
 
 origins = [
     "http://localhost:3000",
     "http://localhost:5000",
 ]
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,13 +41,6 @@ async def main():
 
 def configure_routing():
     app.include_router(epic_skies_api.router)
-
-
-@app.on_event("startup")
-async def configure_db():
-    await mongo_setup.init_connection('epic-skies-db')
-    sentry_service.init_sentry()
-    await init_interval_calls()
 
 
 async def init_interval_calls():
