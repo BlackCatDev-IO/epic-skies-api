@@ -88,7 +88,7 @@ async def add_log(log: LogModel,  token: Annotated[str, Depends(oauth2_scheme)])
         raise e
 
 
-@router.get('/logs', status_code=201)
+@router.get('/logs')
 async def get_logs(  token: Annotated[str, Depends(oauth2_scheme)]) -> list[LogModel]:
     try:
         validate_token(token)
