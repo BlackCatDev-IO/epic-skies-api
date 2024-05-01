@@ -5,6 +5,7 @@ import fastapi
 from models.app_alert_notice import AppAlertNotice
 from models.config_model import ConfigModel
 from models.current_alerts_list_model import CurrentAlertsList
+from models.log_model import LogModel
 from models.user_model import UserModel
 from services import user_service
 from services.app_alert_notice_service import insert_app_alert_notice
@@ -13,6 +14,8 @@ from services.config_service import get_config
 from services import nws_service
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
+
+from services.log_service import insert_log, get_all_logs
 
 router = fastapi.APIRouter()
 
@@ -68,6 +71,28 @@ async def log_app_alert(alert_notice: AppAlertNotice, token: Annotated[str, Depe
             "precip_notice": alert.precip_notice,
             "alert_notice": alert.alert
         }
+    except Exception as e:
+        print(e)
+        raise e
+
+
+@router.post('/logs', status_code=201)
+async def add_log(log: LogModel,  token: Annotated[str, Depends(oauth2_scheme)]) -> LogModel:
+    try:
+        validate_token(token)
+        test = await insert_log(log)
+        print(test)
+        return test
+    except Exception as e:
+        print(e)
+        raise e
+
+
+@router.get('/logs', status_code=201)
+async def get_logs(  token: Annotated[str, Depends(oauth2_scheme)]) -> list[LogModel]:
+    try:
+        validate_token(token)
+        return await get_all_logs()
     except Exception as e:
         print(e)
         raise e
