@@ -6,6 +6,7 @@ from models.app_alert_notice import AppAlertNotice
 from models.config_model import ConfigModel
 from models.current_alerts_list_model import CurrentAlertsList
 from models.log_model import LogModel
+from models.mock_response_model import MockResponseModel
 from models.user_model import UserModel
 from services import user_service
 from services.app_alert_notice_service import insert_app_alert_notice
@@ -16,6 +17,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
 from services.log_service import insert_log, get_all_logs
+from services.mock_service import get_mock_response
 
 router = fastapi.APIRouter()
 
@@ -28,7 +30,7 @@ async def root() -> dict:
 
 
 @router.post('/adduser', status_code=201)
-async def add_user(user: UserModel,token: Annotated[str, Depends(oauth2_scheme)]) -> UserModel:
+async def add_user(user: UserModel, token: Annotated[str, Depends(oauth2_scheme)]) -> UserModel:
     try:
         validate_token(token)
         new_user = await user_service.insert_user(user)
@@ -89,10 +91,20 @@ async def add_log(log: LogModel,  token: Annotated[str, Depends(oauth2_scheme)])
 
 
 @router.get('/logs')
-async def get_logs(  token: Annotated[str, Depends(oauth2_scheme)]) -> list[LogModel]:
+async def get_logs(token: Annotated[str, Depends(oauth2_scheme)]) -> list[LogModel]:
     try:
         validate_token(token)
         return await get_all_logs()
+    except Exception as e:
+        print(e)
+        raise e
+
+
+@router.get('/mocks')
+async def get_mock(key: str, token: Annotated[str, Depends(oauth2_scheme)]) -> MockResponseModel:
+    try:
+        validate_token(token)
+        return await get_mock_response(key)
     except Exception as e:
         print(e)
         raise e
