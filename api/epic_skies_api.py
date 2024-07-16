@@ -26,7 +26,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 @router.get('/')
 async def root() -> dict:
-    return {"status": "ok"}
+    return {"status": "ok", "version": "0.1"}
 
 
 @router.post('/adduser', status_code=201)
