@@ -4,8 +4,7 @@ from services import sentry_service
 
 async def insert_user(user: UserModel) -> UserModel:
     try:
-        new_user = await user.create()
-        return new_user
+        return await user.create()
     except Exception as e:
         sentry_service.capture_exception(repr(e))
 

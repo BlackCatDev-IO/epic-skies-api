@@ -32,4 +32,4 @@ async def init_connection(db_name: str):
         print("Connected to db")
     except Exception as e:
         print(f'Error: {e}')
-        raise Exception(e)
+        raise e
