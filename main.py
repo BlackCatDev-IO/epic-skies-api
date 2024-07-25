@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(fast_api: FastAPI):
-    await mongo_setup.init_connection('epic-skies')
+    await mongo_setup.init_connection()
     sentry_service.init_sentry()
     await init_interval_calls()
     yield
