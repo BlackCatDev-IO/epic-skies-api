@@ -34,7 +34,7 @@ app.add_middleware(
 )
 
 
-async def main():
+def main():
     configure_routing()
     uvicorn.run(app)
 
