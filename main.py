@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from api import epic_skies_api
+from config.config import settings
 from infrastructure import mongo_setup
 from services import config_service
 from services import nws_service
@@ -36,7 +37,7 @@ app.add_middleware(
 
 def main():
     configure_routing()
-    uvicorn.run(app)
+    uvicorn.run(app, host="0.0.0.0", port=settings.APP_PORT)
 
 
 def configure_routing():
@@ -51,6 +52,8 @@ async def init_interval_calls():
 
 
 if __name__ == '__main__':
+    print("main block")
     main()
 else:
+    print("other block")
     configure_routing()

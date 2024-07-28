@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     APP_MAX: int = 100
     IS_PROD_ENV: bool
     ACCESS_TOKEN: str
+    APP_PORT: int
 
     class Config:
         env_file = ".env"
