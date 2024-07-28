@@ -1,6 +1,5 @@
 import uvicorn
 from fastapi import FastAPI
-from starlette.middleware.cors import CORSMiddleware
 from api import epic_skies_api
 from config.config import settings
 from infrastructure import mongo_setup
@@ -19,20 +18,7 @@ async def lifespan(fast_api: FastAPI):
     yield
 
 
-origins = [
-    "http://localhost:3000",
-    "http://localhost:5000",
-]
-
 app = FastAPI(lifespan=lifespan)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 def main():
