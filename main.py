@@ -38,8 +38,6 @@ async def init_interval_calls():
 
 
 if __name__ == '__main__':
-    print("main block")
     main()
 else:
-    print("other block")
     configure_routing()
