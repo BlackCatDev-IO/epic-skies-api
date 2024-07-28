@@ -44,8 +44,7 @@ async def add_user(user: UserModel, token: Annotated[str, Depends(oauth2_scheme)
 async def get_all_users(token: Annotated[str, Depends(oauth2_scheme)]) -> list[UserModel]:
     try:
         validate_token(token)
-        new_user = await user_service.get_all_users()
-        return new_user
+        return await user_service.get_all_users()
     except Exception as e:
         print(e)
         raise e
