@@ -13,8 +13,18 @@ from models.user_model import UserModel
 import socket
 
 
+def is_local_host() -> bool:
+    try:
+        hostname = socket.gethostname()
+        # gethostname returns computer name on Macs
+        return "Loren" in hostname
+    except Exception as e:
+        print(e)
+        return False
+
+
 def get_connection_string() -> str:
-    base_url = f"mongodb://{settings.DB_USER}:{settings.DB_PASS}"
+    base_url = f'mongodb://{settings.DB_USER}:{settings.DB_PASS}'
 
     params = {
         "retryWrites": "true",
@@ -27,7 +37,10 @@ def get_connection_string() -> str:
 
     param_string = urlencode(params)
 
-    return f"{base_url}@{settings.SERVER_IP}:{settings.DB_PORT}/{settings.DB_NAME}?{param_string}"
+    if is_local_host():
+        return f'{base_url}@{settings.SERVER_IP}:{settings.DB_PORT}/{settings.DB_NAME}?{param_string}'
+    else:
+        return f'{base_url}@mongodb:{settings.DB_PORT}/{settings.DB_NAME}?{param_string}'
 
 
 async def init_connection():
@@ -37,7 +50,7 @@ async def init_connection():
 
         await beanie.init_beanie(database=client[settings.DB_NAME], document_models=model_list)
 
-        print(f"INFO: Connected to MongoDB")
+        print(f'INFO: Connected to MongoDB')
     except Exception as e:
         print(f'Error: {e}')
         raise e
