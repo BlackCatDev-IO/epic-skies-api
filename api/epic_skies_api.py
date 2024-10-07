@@ -17,7 +17,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
 from services.log_service import insert_log, get_all_logs
-from services.mock_service import get_mock_response
+from services.mock_service import get_mock_response, add_mock_response
 
 router = fastapi.APIRouter()
 
@@ -26,7 +26,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 @router.get('/')
 async def root() -> dict:
-    return {"status": "ok", "version": "0.8"}
+    return {"status": "ok", "version": "0.9.0", "updated": "10-7-24"}
 
 
 @router.post('/adduser', status_code=201)
@@ -104,6 +104,16 @@ async def get_mock(key: str, token: Annotated[str, Depends(oauth2_scheme)]) -> M
     try:
         validate_token(token)
         return await get_mock_response(key)
+    except Exception as e:
+        print(e)
+        raise e
+
+
+@router.post('/mocks', status_code=201)
+async def add_mock(key: str, mock: dict,  token: Annotated[str, Depends(oauth2_scheme)]) -> MockResponseModel:
+    try:
+        validate_token(token)
+        return await add_mock_response(key, mock)
     except Exception as e:
         print(e)
         raise e

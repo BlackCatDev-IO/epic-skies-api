@@ -14,3 +14,20 @@ async def get_mock_response(key: str) -> MockResponseModel:
     except Exception as e:
         print(e)
         raise e
+
+
+async def add_mock_response(key: str, mock: dict) -> MockResponseModel:
+    try:
+        default_location_ny = {
+            "localCoordinates": {
+                "lat": 40.826,
+                "long": -73.925
+            }
+        }
+
+        new_mock = MockResponseModel(weather_kit=mock, key=key, location=default_location_ny)
+
+        return await MockResponseModel.insert(new_mock)
+    except Exception as e:
+        print(e)
+        raise e
