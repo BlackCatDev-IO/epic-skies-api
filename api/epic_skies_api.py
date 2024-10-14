@@ -26,7 +26,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 @router.get('/')
 async def root() -> dict:
-    return {"status": "ok", "version": "0.9.0", "updated": "10-7-24"}
+    return {"status": "ok", "version": "0.9.1", "updated": "10-14-24"}
 
 
 @router.post('/adduser', status_code=201)
@@ -78,7 +78,7 @@ async def log_app_alert(alert_notice: AppAlertNotice, token: Annotated[str, Depe
 
 
 @router.post('/logs', status_code=201)
-async def add_log(log: LogModel,  token: Annotated[str, Depends(oauth2_scheme)]) -> LogModel:
+async def add_log(log: LogModel, token: Annotated[str, Depends(oauth2_scheme)]) -> LogModel:
     try:
         validate_token(token)
         test = await insert_log(log)
@@ -110,7 +110,8 @@ async def get_mock(key: str, token: Annotated[str, Depends(oauth2_scheme)]) -> M
 
 
 @router.post('/mocks', status_code=201)
-async def add_mock(key: str, mock: dict,  token: Annotated[str, Depends(oauth2_scheme)]) -> MockResponseModel:
+async def add_mock(key: str, mock: dict, token: Annotated[str, Depends(oauth2_scheme)]) \
+        -> MockResponseModel:
     try:
         validate_token(token)
         return await add_mock_response(key, mock)
