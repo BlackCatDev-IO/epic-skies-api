@@ -17,7 +17,7 @@ def is_local_host() -> bool:
     try:
         hostname = socket.gethostname()
         # gethostname returns computer name on Macs
-        return "Loren" in hostname
+        return "MacBookPro" in hostname
     except Exception as e:
         print(e)
         return False
