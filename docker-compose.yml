@@ -1,0 +1,29 @@
+services:
+  epic-skies-api:
+    container_name: epic-skies-api
+    image: registry.blackcatdev.io/epic-skies-api:latest
+    networks:
+      - epic-skies
+      - epicskiesdb
+    restart: always
+    environment:
+      - GITHUB_USER=${GITHUB_USER}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - SERVER_IP=${SERVER_IP}
+      - CONFIG_ID=${CONFIG_ID}
+      - CURRENT_ALERTS_LIST_ID=${CURRENT_ALERTS_LIST_ID}
+      - SENTRY_URL=${SENTRY_URL}
+      - MIX_PANEL_TOKEN=${MIX_PANEL_TOKEN}
+      - APP_MAX=${APP_MAX:-100}
+      - IS_PROD_ENV=${IS_PROD_ENV}
+      - ACCESS_TOKEN=${ACCESS_TOKEN}
+      - APP_PORT=${APP_PORT}
+networks:
+  epic-skies:
+    external: true
+  epicskiesdb:
+    external: true
