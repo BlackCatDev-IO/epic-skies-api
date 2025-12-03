@@ -24,23 +24,11 @@ def is_local_host() -> bool:
 
 
 def get_connection_string() -> str:
-    base_url = f'mongodb://{settings.DB_USER}:{settings.DB_PASS}'
-
-    params = {
-        "retryWrites": "true",
-        "loadBalanced": "false",
-        "serverSelectionTimeoutMS": "5000",
-        "connectTimeoutMS": "10000",
-        "authSource": settings.DB_NAME,
-        "authMechanism": "SCRAM-SHA-256"
-    }
-
-    param_string = urlencode(params)
-
     if is_local_host():
-        return f'{base_url}@{settings.SERVER_IP}:{settings.DB_PORT}/{settings.DB_NAME}?{param_string}'
+        print(f'INFO: Connection string: {settings.LOCAL_DB}')
+        return settings.LOCAL_DB
     else:
-        return f'{base_url}@mongodb:{settings.DB_PORT}/{settings.DB_NAME}?{param_string}'
+        return settings.PROD_DB
 
 
 async def init_connection():
